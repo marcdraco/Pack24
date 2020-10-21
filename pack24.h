@@ -1,3 +1,6 @@
+#ifndef __MARCDRACO_PACK24__ARDUINO
+#define __MARCDRACO_PACK24__ARDUINO
+
 /***********************************************************************************
   Copyright 2020, Marc Draco
   Redistribution and use in source and binary forms, with or without modification,
@@ -112,3 +115,5 @@ void unpackSigned24(uint8_t U8, uint16_t L16, int16_t* X, int16_t* Y)
         *Y = (*Y ^ 0xFFFF) + 1;
     }
 }
+
+#endif
