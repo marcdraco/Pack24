@@ -23,6 +23,18 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 ************************************************************************************/
 #include "Arduino.h"
+\
+using pack24_t = struct 
+{
+    uint8_t   U8;
+    uint16_t L16;
+};
+
+using unpack24_t = struct 
+{
+    uint16_t X;
+    uint16_t Y;
+};
 
 /**
  * @brief 
@@ -41,6 +53,23 @@ void pack24(uint16_t X, uint16_t Y, uint8_t* U8, uint16_t* L16)
 }
 
 /**
+ * @brief Pack an X, Y 32 bit pair into 24 bits
+ * 
+ * @param X Unsigned int 0 - 4095
+ * @param Y Unsigned int 0 - 4095
+ * 
+ * @return pack24_t 
+ */
+pack24_t pack24(uint16_t X, uint16_t Y)
+{
+    pack24_t r;
+
+    r.U8  = ((X & 0x0F00) >> 4) | ((Y & 0x0F00) >> 8);
+    r.L16 = ((X & 0x00FF) << 8) |  (Y & 0x00FF);
+    return r;
+}
+
+/**
  * @brief Unpack a previously packed 16 bit pair
  * 
  * @param U8 Packed char from pack routine 
@@ -55,6 +84,23 @@ void unpack24(uint8_t U8, uint16_t L16, uint16_t* X, uint16_t* Y)
 }
 
 /**
+ * @brief Unpack a previously packed 16 bit pair
+ * 
+ * @param U8 Packed char from pack routine 
+ * @param L16 Packed word from pack routine
+ * 
+ * @return unpacked24_t 
+ */
+ 
+unpack24_t unpack24(uint8_t U8, uint16_t L16)
+{
+    unpack24_t r; 
+    r.X  = ((U8 & 0x0F) << 8) |  (L16 & 0x00FF);
+    r.Y  = ((U8 & 0xF0) << 4) | ((L16 & 0xFF00) >> 8) ;
+    return r;
+}
+
+/**
  * @brief Pack 32 bits from two signed variables into 24 bits
  * 
  * @param X First variable - +/- 2047
@@ -64,7 +110,6 @@ void unpack24(uint8_t U8, uint16_t L16, uint16_t* X, uint16_t* Y)
  */
 void packSigned24(int16_t X, int16_t Y, uint8_t* U8, uint16_t* L16)
 {
-
     uint8_t sX = ( (X & 0x8000) >> 8);
     uint8_t sY = ( (Y & 0x8000) >> 8);
 
